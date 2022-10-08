@@ -1,0 +1,29 @@
+- name: Add the ansible user
+  user: name=ansible password="*"
+  become: yes
+
+- name: Add ansible user to sudoers
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp:
+    line: "ansible ALL = (ALL) NOPASSWD: ALL"
+    validate: "/usr/sbin/visudo -cf %s"
+  become: yes
+
+- name: Install ansible
+  pip: name=ansible
+  become: yes
+  become_user: ansible
+
+- name: Install git
+  package: name=git state=present
+  become: yes
+
+- name: Add cronjob for ansible-pull
+  cron:
+    name: ansible-pull
+    job: "ansible-pull -U https://github.com/nflenz/server-configuration.git -i hosts server.yaml"
+    minute: "*/5"
+  become: yes
+  become_user: ansible
