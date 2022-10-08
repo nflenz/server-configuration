@@ -1,5 +1,5 @@
 - name: Add the ansible user
-  user: name=ansible password="*"
+  user: name=ansible password="*" expires="-1"
   become: yes
 
 - name: Add ansible user to sudoers
